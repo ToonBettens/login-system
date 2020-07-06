@@ -127,7 +127,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <br><br>
 
-  <a href="login.php">Login here</a>
+  <a href="login.php">Login</a>
 
 </body>
 

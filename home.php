@@ -22,7 +22,7 @@ if(!isset($_SESSION["logged_in"]) || $_SESSION["logged_in"] !== true) {
 
   <h2>HomePage</h2>
 
-  <p>Welcome <?php echo htmlspecialchars(trim(($_SESSION["username"]))); ?></p>
+  <p>Welcome <?php echo validate_input(($_SESSION["username"])); ?></p>
   <br>
   <a href="logout.php">Log out</a>
 
