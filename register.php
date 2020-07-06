@@ -47,7 +47,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $password_err = "Enter a password.";
   } elseif(strlen($password) < 8) {
     $password_err = "Password must have atleast 8 characters.";
-  } 
+  } elseif(strpos($password, " ")) {
+    $password_err = "No whitespaces are allowed";
+  }
 
   //confirm_password validation
   $confirm_password = validate_input($_POST["confirm_password"]);
@@ -61,9 +63,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   //insert new user (if no error occured)
   if(empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
 
-    if($stmt = $conn->prepare("INSERT INTO USER (username, password) VALUES (?, ?)")) {
+    if($stmt = $conn->prepare("INSERT INTO USER (username, password, salt) VALUES (?, ?, ?)")) {
 
-      $stmt->bind_param("ss", $username, $password);
+      $pwd_arr = generate_password($password);
+      $stmt->bind_param("sss", $username, $pwd_arr["data"], $pwd_arr["salt"]);
 
       if($stmt->execute()) {
 

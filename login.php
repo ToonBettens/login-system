@@ -33,7 +33,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
   if(empty($username_err) && empty($password_err)) {
 
     if($stmt = $conn->prepare(
-      "SELECT U.userID, U.password FROM USER as U WHERE U.username = ?")) {
+      "SELECT U.userID, U.password, U.salt FROM USER as U WHERE U.username = ?")) {
 
       $stmt->bind_param("s", $username);
 
@@ -42,10 +42,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->store_result();
 
         if($stmt->num_rows == 1) {
-          $stmt->bind_result($id, $user_password);
+          $stmt->bind_result($id, $hashed_password, $salt);
           
           if($stmt->fetch()) {
-            if($password == $user_password) {
+            if(validate_password($password, $salt, $hashed_password)) {
             session_start();
             $_SESSION["logged_in"] = true;
             $_SESSION["id"] = $id;
@@ -54,7 +54,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
 
             }else{
-            $password_err = "Given password does not match the username  " . $user_password . " blub " . "$id" . " " . $password;
+            $password_err = "Given password does not match the username";
             }
           }else{
             echo "Something went wrong. Please try again later.";
