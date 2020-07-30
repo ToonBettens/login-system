@@ -105,7 +105,7 @@ $conn->close();
   <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
     <label for="username">Username:</label>
-    <input type="texrt" id="username" name="username" value="<?php echo $username; ?>">
+    <input type="text" id="username" name="username" value="<?php echo $username; ?>">
     <span>&ensp; <?php echo $username_err; ?></span>
 
     <br><br>
