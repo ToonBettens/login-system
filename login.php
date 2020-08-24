@@ -1,7 +1,7 @@
-<?php 
+<?php
 session_start();
 
-if(isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] === true && isset($_SESSION["username"]) && isset($_SESSION["id"])) {
+if (isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] === true && isset($_SESSION["username"]) && isset($_SESSION["id"])) {
   header("Location: home.php");
   exit;
 }
@@ -13,66 +13,66 @@ $username = $password = "";
 $username_err = $password_err = "";
 $error_notice = "";
 
-if($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   //username validation
   $username = validate_input($_POST["username"]);
 
-  if(empty($username)) {
+  if (empty($username)) {
     $username_err = "Enter your username.";
   }
 
   //password validation
   $password = validate_input($_POST["password"]);
 
-  if(empty($password)) {
+  if (empty($password)) {
     $password_err = "Enter your password.";
   }
 
   //check user credentials
-  if(empty($username_err) && empty($password_err)) {
+  if (empty($username_err) && empty($password_err)) {
 
-    if($stmt = $conn->prepare(
-      "SELECT U.userID, U.password, U.salt FROM USER as U WHERE U.username = ?")) {
+    if ($stmt = $conn->prepare(
+      "SELECT U.userID, U.password, U.salt FROM USER as U WHERE U.username = ?"
+    )) {
 
       $stmt->bind_param("s", $username);
 
-      if($stmt->execute()) {
+      if ($stmt->execute()) {
 
         $stmt->store_result();
 
-        if($stmt->num_rows == 1) {
+        if ($stmt->num_rows == 1) {
           $stmt->bind_result($id, $hashed_password, $salt);
-          
-          if($stmt->fetch()) {
-            if(validate_password($password, $salt, $hashed_password)) {
-            session_start();
-            $_SESSION["logged_in"] = true;
-            $_SESSION["id"] = $id;
-            $_SESSION["username"] = $username;
-            header("Location: home.php");
-            exit;
 
-            }else{
-            $password_err = "Given password does not match the username";
+          if ($stmt->fetch()) {
+            if (validate_password($password, $salt, $hashed_password)) {
+              session_start();
+              $_SESSION["logged_in"] = true;
+              $_SESSION["id"] = $id;
+              $_SESSION["username"] = $username;
+              header("Location: home.php");
+              exit;
+            } else {
+              $password_err = "Given password does not match the username";
             }
-          }else{
+          } else {
             echo "Something went wrong. Please try again later.";
           }
-        }else{
+        } else {
           $username_err = "No account registered to this username. Register to create account.";
         }
-      }else{
+      } else {
         echo "Something went wrong. Please try again later.";
       }
-    }else{
+    } else {
       echo "Something went wrong. Please try again later.";
     }
     $stmt->close();
   }
 }
 
-if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["err"]) && $_GET["err"] == 1) {
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["err"]) && $_GET["err"] == 1) {
   $error_notice = "Oops, something went wrong. Please try to login again.";
 }
 
@@ -93,7 +93,7 @@ $conn->close();
   <h2>Login Form</h2>
 
   <?php
-  if(!empty($error_notice)) {
+  if (!empty($error_notice)) {
     echo "<span>$error_notice</span><br><br>";
   }
   ?>
@@ -118,7 +118,7 @@ $conn->close();
 
     <input type="submit" value="Submit">
 
-  </form> 
+  </form>
 
   <br><br>
 
